@@ -3,6 +3,12 @@
 //
 //   assets/hero.png            original portrait (never modified)
 //   assets/cutouts/hero.png    transparent copy of the portrait
+//   assets/projects/<name>/    project screenshots
+//   assets/gallery/            your paintings (Gallery section)
+//   assets/events/<project>/   event photos for a project (optional)
+//   assets/art/                painted art used as small accents (optional)
+//   assets/signature.png       nav logo (optional)
+//   assets/fonts/handwriting.woff2   handwriting font (optional)
 //   public/assets/img/**       compressed WebP files the site actually loads
 //   public/assets/resume.pdf   copy of the resume PDF found in assets/
 //   src/data/images.generated.json   sizes + srcsets, read by src/lib/images.js
@@ -187,6 +193,41 @@ async function main() {
   }
   manifest.__gallery = gallery
 
+  // Event photos: assets/events/<project id>/<file>, grouped by project.
+  const events = {}
+  for (const src of walk(path.join(ASSETS, 'events')).sort()) {
+    const key = path.relative(ASSETS, src).split(path.sep).join('/')
+    const parts = key.split('/')
+    if (parts.length < 3) {
+      console.warn(`  skipped ${key}: put event photos in assets/events/<project id>/`)
+      continue
+    }
+    await toWebp(src, key, [360, 1600], manifest, { quality: 82 })
+    ;(events[parts[1]] ||= []).push(key)
+  }
+  manifest.__events = events
+
+  // Optional painted art: assets/art/<file>
+  const art = []
+  for (const src of walk(path.join(ASSETS, 'art')).sort()) {
+    const key = path.relative(ASSETS, src).split(path.sep).join('/')
+    await toWebp(src, key, [240, 900], manifest, { quality: 84 })
+    art.push(key)
+  }
+  manifest.__art = art
+
+  // Optional signature for the nav logo: assets/signature.png
+  const signature = path.join(ASSETS, 'signature.png')
+  if (fs.existsSync(signature)) await toWebp(signature, 'signature.png', [480], manifest, { quality: 90 })
+
+  // Optional handwriting font: assets/fonts/handwriting.woff2
+  const font = path.join(ASSETS, 'fonts', 'handwriting.woff2')
+  manifest.__handFont = fs.existsSync(font)
+  if (manifest.__handFont) {
+    fs.mkdirSync(path.join(OUT, 'fonts'), { recursive: true })
+    fs.copyFileSync(font, path.join(OUT, 'fonts', 'handwriting.woff2'))
+  }
+
   // Resume: assets/resume.pdf, or the first PDF with "resume" in its name.
   const pdf =
     ['resume.pdf'].find((f) => fs.existsSync(path.join(ASSETS, f))) ||
@@ -195,7 +236,8 @@ async function main() {
   else console.warn('  no resume PDF found in assets/')
 
   fs.writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2) + '\n')
-  console.log(`Done. ${Object.keys(manifest).length - 1} images, ${gallery.length} in gallery.`)
+  const count = Object.keys(manifest).filter((k) => !k.startsWith('__')).length
+  console.log(`Done. ${count} images (${gallery.length} gallery, ${Object.values(events).flat().length} event photos, ${art.length} art).`)
 }
 
 main().catch((e) => {

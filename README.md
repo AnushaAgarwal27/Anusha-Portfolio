@@ -28,31 +28,42 @@ Open http://localhost:5173. Images are prepared automatically every time you run
 
 Everything you can read on the site lives in **`src/data/content.js`**: name, tagline, bio, the "At a glance" card, experience, projects, skills, contact links, footer. You never need to open a component.
 
-- **Tagline:** three options sit in a comment inside `hero`. Paste the one you want into `tagline`.
-- **Projects:** each project is one object in `projects.items` and becomes one full-width row, in that order. `award` makes the red tags, `highlights` the number facts, `tech` the tags, `summary` and `details` the text (all of it is always visible).
-- **Links:** a link only shows up as a button when it has a real `url`. Links with an empty `url` are hidden, so nothing unfinished ever appears on the site. Fill in the address and the button appears.
+- **Tagline and About opener:** alternates sit in comments inside `hero` and `about`.
+- **Projects:** a new project is one object in `projects.items`. The first 3 are featured rows (small screenshot, summary, highlights, tags, links, and a collapsed "Details" toggle). The rest go into the compact "More projects" grid, which shows 6 and puts the others behind a "Show all N projects" button. Add `featured: true` or `featured: false` to override.
+- **Links:** a link only shows up as a button when it has a real `url`. Empty ones are hidden.
+- **Handwritten notes:** `hero.note` and the `note` on a project screenshot. Only write notes that are true.
 - **Skills:** each entry in `skills.groups` is one row of tags.
+- **Colours:** the whole palette is a short list of variables at the top of `src/styles.css`.
 - **Find what is left:** search `content.js` for `TODO`.
 
-## Images
+## Images and optional extras
 
 ```
 assets/
   hero.png                        the portrait, the only illustration on the site
   cutouts/hero.png                transparent copy, made automatically
   projects/<name>/                project screenshots
-  gallery/                        your own paintings (empty for now)
+  events/<project id>/            event photos for a project (optional)
+  art/                            your own painted art (optional)
+  gallery/                        your own paintings (optional)
+  signature.png                   replaces the text name in the nav (optional)
+  fonts/handwriting.woff2         replaces Caveat for handwritten notes (optional)
   Resume-Anusha Agarwal.pdf       served at /assets/resume.pdf
-  (other .png files)              earlier illustrations, kept but not used
+  (other .png files)              earlier illustrations, kept but never used
 ```
 
-- **Project screenshots:** drop the file in `assets/projects/<name>/`, then add `{ src: 'projects/<name>/<file>.png', alt: '...' }` to that project's `images` list in `content.js`. A project with no image becomes a text-only row.
-- **Gallery:** drop paintings (png, jpg, or webp) into `assets/gallery/`. While that folder is empty, the Gallery section and its nav link are hidden. As soon as it has an image, both appear on their own, showing whatever is in the folder sorted by file name. Optional titles and alt text go in `gallery.captions` in `content.js`.
-- **Resume:** replace the PDF in `assets/`. Any PDF with "resume" in its name works, or name it `resume.pdf`.
-- **Portrait cutout:** the script removes the cream background from `hero.png` and saves the result in `assets/cutouts/`. If you ever want a cleaner edge, replace the file there (for example with one made by `rembg`) and it will be used as is.
-- **Favicon and link preview:** `public/favicon.png` (a cobalt "A"), `public/apple-touch-icon.png`, and `public/og.png` are made by `npm run og` and committed. Rerun it if you change your name or the portrait.
+The site works with every optional folder empty.
 
-After adding or changing images, restart `npm run dev` (or run `npm run images`). The script compresses everything to WebP in `public/assets/`, which is generated and not committed.
+- **Project screenshots:** drop the file in `assets/projects/<name>/`, then add `{ src: 'projects/<name>/<file>.png', alt: '...' }` to that project's `images` list. Screenshots show on featured rows.
+- **Event photos:** drop photos into `assets/events/<project id>/` (the `id` from `content.js`, for example `assets/events/docket/`). A featured project then shows up to 4 thumbnails, with a "+N" tile for the rest, and they open in a viewer with captions. The caption is the file name, so name files like `demo-table-at-cal-hacks.jpg`. For hand-written captions, list them in the project's `photos` array instead. No photos, no strip.
+- **Painted art:** files in `assets/art/` are used by name: `about.png` beside the About text, `divider.png` as a small tile in the paint divider, and `<project id>.png` as a small header on that project. You can also point at any file from the `art` block or a project's `art` field in `content.js`. Nothing is shown while the folder is empty.
+- **Gallery:** drop paintings into `assets/gallery/`. While that folder is empty, the Gallery section and its nav link are hidden.
+- **Signature:** `assets/signature.png` (dark ink on a white or transparent background works best) replaces the text name in the nav.
+- **Handwriting font:** `assets/fonts/handwriting.woff2` replaces Caveat for every handwritten note and label.
+- **Resume:** replace the PDF in `assets/`. Any PDF with "resume" in its name works.
+- **Favicon and link preview:** `public/favicon.png`, `public/apple-touch-icon.png`, and `public/og.png` are made by `npm run og` and committed. Rerun it if you change your name or the portrait.
+
+After adding or changing anything in `assets/`, restart `npm run dev` (or run `npm run images`).
 
 ## Deploy
 
@@ -77,7 +88,7 @@ Set `site.url` in `src/data/content.js` to your live address and redeploy. Link 
 ```
 src/data/content.js       all text, links, and image paths
 src/components/           Nav, Hero, Projects, and the other sections
-src/components/bits.jsx   brush strokes, paint divider, torn edges, tape, buttons, image frame
+src/components/bits.jsx   brush strokes, paint divider, torn edges, tape, buttons, details toggle, photo viewer
 src/lib/                  scroll reveal, parallax, image lookup, torn paper shapes
 src/styles.css            the whole look, mobile first
 scripts/                  image pipeline, link preview image and favicon, screenshots

@@ -1,10 +1,11 @@
-import { about, contact, contactSection, experience, gallery, site, skills } from '../data/content.js'
-import { galleryKeys, getImage } from '../lib/images.js'
+import { about, art, contact, contactSection, experience, gallery, site, skills } from '../data/content.js'
+import { findArt, galleryKeys, getImage, prettyName } from '../lib/images.js'
 import { tornClip } from '../lib/paper.js'
 import { Brush, Button, Frame, InkLink, SectionHeading, Tape, TornEdge } from './bits.jsx'
 
 export function About() {
   const { glance } = about
+  const picture = findArt(art.about, 'about')
   return (
     <section className="section wrap about" aria-labelledby="about">
       <div className="about__text">
@@ -15,6 +16,12 @@ export function About() {
           </p>
         ))}
       </div>
+      <div className="about__side">
+      {picture && (
+        <div className="about__art reveal" style={{ '--r': '-1.6deg' }}>
+          <Frame src={picture} alt={art.aboutAlt} sizes="(min-width: 900px) 300px, 70vw" />
+        </div>
+      )}
       <aside className="glance reveal" style={{ '--r': '1.3deg' }} aria-labelledby="glance">
         <div className="glance__paper" style={{ clipPath: tornClip(7, { depth: 8 }) }} aria-hidden="true" />
         <Tape className="tape--a" />
@@ -28,6 +35,7 @@ export function About() {
           ))}
         </dl>
       </aside>
+      </div>
     </section>
   )
 }
@@ -35,7 +43,7 @@ export function About() {
 export function Experience() {
   return (
     <section className="section wrap" aria-labelledby="experience">
-      <SectionHeading id="experience" variant={1} tone="ochre">
+      <SectionHeading id="experience" variant={1}>
         {experience.heading}
       </SectionHeading>
       <ol className="jobs">
@@ -70,23 +78,16 @@ export function Experience() {
   )
 }
 
-const prettyName = (key) =>
-  key
-    .split('/')
-    .pop()
-    .replace(/\.[^.]+$/, '')
-    .replace(/[-_]+/g, ' ')
-
 // Reads only from /assets/gallery/. While that folder is empty the whole
 // section (and its nav link) is hidden.
 export function Gallery() {
   if (galleryKeys.length === 0) return null
   return (
     <section className="section wrap" aria-labelledby="gallery">
-      <SectionHeading id="gallery" variant={0} tone="olive">
+      <SectionHeading id="gallery" variant={0}>
         {gallery.heading}
       </SectionHeading>
-      <p className="section__intro reveal">{gallery.intro}</p>
+      {gallery.intro && <p className="section__intro reveal">{gallery.intro}</p>}
       <ul className="gallery">
         {galleryKeys.map((key) => {
           const cap = gallery.captions[key.split('/').pop()] || {}
@@ -94,7 +95,7 @@ export function Gallery() {
           return (
             <li key={key} className="reveal">
               <a href={getImage(key).src} target="_blank" rel="noopener noreferrer" aria-label={`${title}, open full size in a new tab`}>
-                <Frame src={key} alt={cap.alt || `Painting: ${title}`} sizes="(min-width: 900px) 360px, 90vw" />
+                <Frame src={key} alt={cap.alt || title} sizes="(min-width: 900px) 360px, 90vw" />
               </a>
               <p className="gallery__caption">
                 {title}
@@ -109,7 +110,7 @@ export function Gallery() {
 }
 
 export function Skills() {
-  const tones = ['cobalt', 'sienna', 'olive']
+  const tones = ['forest', 'sage', 'leaf']
   return (
     <section className="section wrap" aria-labelledby="skills">
       <SectionHeading id="skills" variant={2}>
@@ -140,7 +141,7 @@ export function Skills() {
 
 export function Contact() {
   return (
-    <section className="band band--cobalt section contact" aria-labelledby="contact">
+    <section className="band band--moss section contact" aria-labelledby="contact">
       <TornEdge seed={61} />
       <div className="wrap contact__inner">
         <h2 className="h2 h2--cream reveal" id="contact">

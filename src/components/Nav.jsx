@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { nav, site, contact } from '../data/content.js'
-import { galleryKeys } from '../lib/images.js'
+import { findImage, galleryKeys } from '../lib/images.js'
 
 // The Gallery link only exists while there are paintings in /assets/gallery/.
 const links = nav.filter((l) => l.href !== '#gallery' || galleryKeys.length > 0)
+
+// Optional: assets/signature.png replaces the text name.
+const signature = findImage('signature.png')
 
 export default function Nav() {
   const [open, setOpen] = useState(false)
@@ -15,8 +18,14 @@ export default function Nav() {
       </a>
       <nav className="nav" aria-label="Main">
         <a className="nav__brand" href="#top" onClick={close}>
-          <span className="nav__dab" aria-hidden="true" />
-          <span>{site.name}</span>
+          {signature ? (
+            <img className="nav__signature" src={signature.src} width={signature.width} height={signature.height} alt={site.name} />
+          ) : (
+            <>
+              <span className="nav__dab" aria-hidden="true" />
+              <span>{site.name}</span>
+            </>
+          )}
         </a>
         <button
           className="nav__toggle"

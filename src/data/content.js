@@ -9,14 +9,23 @@
 //  Links: a link with an empty url (or one that starts with 'TODO') is simply
 //  not shown on the site. Fill in the url and the button appears.
 //
+//  Optional extras (the site works without any of them, see README):
+//    assets/events/<project id>/   event photos for a project
+//    assets/art/                   your own painted art
+//    assets/signature.png          replaces the text name in the nav
+//    assets/fonts/handwriting.woff2  replaces Caveat for handwritten notes
+//
 //  Search this file for "TODO" to find everything that still needs you.
 // ============================================================================
 
 export const site = {
   name: 'Anusha Agarwal',
-  title: 'Anusha Agarwal | Software engineer who paints',
+  title: 'Anusha Agarwal | Software engineer',
   description:
-    'Portfolio of Anusha Agarwal, a Penn State computer science junior who builds software and paints. Software engineering intern at PNC (SRE), hackathon builder, and learning assistant.',
+    'Personal site of Anusha Agarwal, a computer science junior at Penn State who builds APIs, agents, and tools that feel considered.',
+  // Short lines used on the link preview image (npm run og).
+  ogEyebrow: 'Software engineer',
+  ogLine: 'Penn State CS · APIs, agents, and tools',
   // TODO: after you deploy, paste your live address here (no trailing slash),
   // for example 'https://anusha.vercel.app'. Link previews need the full URL.
   url: '',
@@ -51,14 +60,16 @@ export const hero = {
   eyebrow: 'Penn State · Computer Science · Class of May 2028',
   name: ['Anusha', 'Agarwal'],
   // TAGLINE OPTIONS. Pick one and paste it into `tagline` below.
-  //   1. 'I build software and I paint. Both start from wanting things to feel considered.'
-  //   2. 'Software engineer with a painter’s eye: APIs, agents, and tools that feel considered.'
-  //   3. 'CS junior at Penn State who ships agentic tools on weekdays and paints on weekends.'
-  tagline: 'I build software and I paint. Both start from wanting things to feel considered.',
+  //   1. 'I build software, and I care about the details that make things feel considered.'
+  //   2. 'APIs, agents, and tools, built so they feel considered.'
+  //   3. 'CS junior at Penn State building agentic tools and the APIs behind them.'
+  tagline: 'I build software, and I care about the details that make things feel considered.',
+  // Handwritten note with an arrow pointing at the portrait. '' removes it.
+  note: 'hi, that’s me',
   primaryButton: { label: 'See my work', href: '#projects' },
   secondaryButton: { label: 'Resume', href: contact.resume },
-  image: { src: 'hero', alt: 'Painted self portrait of Anusha, hands on hips, wearing glasses and hoop earrings' },
-  // Three facts a recruiter should catch in the first few seconds.
+  image: { src: 'hero', alt: 'Painted portrait of Anusha, hands on hips, wearing glasses and hoop earrings' },
+  // Three quick facts shown on the torn strip under the portrait.
   facts: [
     { label: 'Most recent', text: 'Software Engineering Intern, PNC (SRE Team)' },
     { label: 'Studying', text: 'CS junior, Math minor, Penn State' },
@@ -68,9 +79,13 @@ export const hero = {
 
 export const about = {
   heading: 'About',
+  // ALTERNATE OPENERS for the second paragraph. To use one, swap it in for
+  // the first sentence ("I build software, and I care about ...").
+  //   a. 'Software is how I make things work. Color is how I make them feel.'
+  //   b. 'I’m happiest when something I built looks and feels like someone cared.'
   paragraphs: [
     'Hi, I’m Anusha. I’m a computer science junior at Penn State with a math minor, graduating in May 2028.',
-    'I build software and I paint, and both come from the same place: wanting to make things that feel considered. In code that means APIs that are easy to reason about, tools that save people real steps, and agents that can show their work. On paper it means color, texture, and the small details you only notice when they are missing.',
+    'I build software, and I care about the details that make things feel considered. In code that means APIs that are easy to reason about, tools that save people real steps, and agents that can show their work.',
     'Most recently I was a software engineering intern on the SRE team at PNC. At school I build with the HackPSU technology team, help teach CMPSC 200, and spend a good number of weekends at hackathons.',
   ],
   // The small torn paper card next to the bio.
@@ -79,7 +94,6 @@ export const about = {
     items: [
       { label: 'Penn State', text: 'B.S. Computer Science, Math minor, May 2028' },
       { label: 'Currently', text: 'HackPSU tech team and CMPSC 200 Learning Assistant' },
-      { label: 'Looking for', text: 'Software engineering internships' },
     ],
   },
 }
@@ -124,17 +138,32 @@ export const experience = {
 }
 
 // ----------------------------------------------------------------------------
-//  PROJECTS (one full-width row each, shown in this order)
+//  PROJECTS
 //
+//  A new project is one object in `items`. The first 3 in the list are shown
+//  as featured rows (with a screenshot). Everything after that goes into the
+//  compact "More projects" grid, which shows 6 and tucks the rest behind a
+//  "Show all" button. To override the automatic choice, add `featured: true`
+//  or `featured: false` to a project.
+//
+//  id:          short name, also the folder name for assets/events/<id>/.
 //  event, year: the small line above the title.
-//  award:       red tags. Leave as [] if there is no award.
-//  quote:       optional tagline in handwriting.
-//  summary:     one or two sentences.
-//  details:     the rest of the description. Everything is always visible.
-//  highlights:  short number facts. Leave as [] for none.
+//  award:       small tags. Leave as [] if there is no award.
+//  quote:       optional tagline in handwriting (featured rows only).
+//  summary:     ONE line. Always visible.
+//  details:     longer paragraphs, behind the "Details" toggle.
+//  highlights:  short number facts (featured rows only). [] for none.
 //  tech:        tech tags.
-//  images:      screenshots from /assets/projects/<name>/. Leave as [] for a
-//               text-only row.
+//  images:      screenshots from /assets/projects/<name>/ (featured rows only).
+//               Each can have a `note`: a short handwritten annotation. Only
+//               write notes that are true.
+//  photos:      optional event photos, for example
+//                 photos: [{ src: 'events/docket/team.jpg', caption: 'Demo table at Cal Hacks' }],
+//               If you leave this out, every image in assets/events/<id>/ is
+//               used automatically (caption = the file name).
+//  art:         optional painted art from /assets/art/, for example
+//               art: 'art/berkeley.png'. A file named assets/art/<id>.png is
+//               picked up automatically.
 //  links:       { label, url }. Links with an empty url are not shown.
 //
 //  Tech tags and years were checked against the GitHub repos and Devpost pages
@@ -144,6 +173,7 @@ export const experience = {
 export const projects = {
   heading: 'Projects',
   intro: 'Mostly built at hackathons, usually with agents, always with a real person in mind.',
+  moreHeading: 'More projects',
   items: [
     {
       id: 'docket',
@@ -163,10 +193,12 @@ export const projects = {
         {
           src: 'projects/docket/docket-desk.png',
           alt: 'Docket: The Case start screen, a wooden desk with six blocky agent characters and two student case files',
+          note: 'the game version: scripted, no real call',
         },
         {
           src: 'projects/docket/docket-hearing.png',
           alt: 'Docket hearing round, a judge at the bench between the Advocate and the Auditor with $440.64 at stake',
+          note: 'round 1, the hearing',
         },
       ],
       links: [
@@ -336,7 +368,7 @@ export const projects = {
 // ----------------------------------------------------------------------------
 export const gallery = {
   heading: 'Gallery',
-  intro: 'Original paintings and studies.',
+  intro: '',
   captions: {},
 }
 
@@ -383,5 +415,20 @@ export const skills = {
 
 export const contactSection = {
   heading: 'Let’s talk',
-  text: 'Internships, hackathon teams, or a painting you want to argue about. My inbox is open.',
+  text: 'Hackathon teams, side projects, or just to say hi. My inbox is open.',
+}
+
+// ----------------------------------------------------------------------------
+//  OPTIONAL PAINTED ART (from /assets/art/, nothing shows while it is empty)
+//  Leave these as '' to use the automatic file names:
+//    assets/art/about.png     shown beside the About text
+//    assets/art/divider.png   small tile in the paint divider
+//    assets/art/<project id>.png   small header on that project
+//  Or point at any file in the folder, for example about: 'art/me-reading.png'.
+// ----------------------------------------------------------------------------
+export const art = {
+  about: '',
+  aboutAlt: 'Painted illustration',
+  divider: '',
+  dividerAlt: 'Small painted tile',
 }

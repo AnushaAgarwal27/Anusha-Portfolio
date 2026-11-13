@@ -1,6 +1,7 @@
-import { getImage } from '../lib/images.js'
+import { useEffect, useRef, useState } from 'react'
+import { findArt, getImage } from '../lib/images.js'
 import { tornPath } from '../lib/paper.js'
-import { site } from '../data/content.js'
+import { art, site } from '../data/content.js'
 
 // SVG filters used for rough paint edges and dry brush streaks.
 export function SvgDefs() {
@@ -87,11 +88,14 @@ export function PaintPatch({ className = '', rows = 7, ...rest }) {
   )
 }
 
-// Three loose brush strokes used as a divider between sections.
+// Three loose brush strokes used as a divider between sections. If there is
+// a divider tile in /assets/art/, it sits in the middle of the strokes.
 export function PaintDivider() {
+  const tile = findArt(art.divider, 'divider')
   return (
-    <div className="divider reveal" aria-hidden="true">
+    <div className={`divider reveal ${tile ? 'divider--art' : ''}`} aria-hidden={tile ? undefined : 'true'}>
       <Brush variant={0} />
+      {tile && <Pic className="divider__tile" src={tile} alt={art.dividerAlt} sizes="120px" />}
       <Brush variant={1} />
       <Brush variant={2} />
     </div>
@@ -114,9 +118,9 @@ export function TornEdge({ seed = 1, bottom = false }) {
   )
 }
 
-export function SectionHeading({ children, id, variant = 0, tone = 'tomato' }) {
+export function SectionHeading({ children, id, variant = 0 }) {
   return (
-    <h2 className={`h2 h2--${tone} reveal`} id={id}>
+    <h2 className="h2 reveal" id={id}>
       <span className="h2__text">{children}</span>
       <Brush className="h2__stroke" variant={variant} />
     </h2>
@@ -145,11 +149,7 @@ export function LinkButton({ url, children }) {
   return (
     <a className="lbtn" href={url} {...(ext ? newTab : {})}>
       {children}
-      {ext && (
-        <span className="lbtn__arrow" aria-hidden="true">
-          ↗
-        </span>
-      )}
+      {ext && <span aria-hidden="true">↗</span>}
       {ext && <span className="sr-only"> (opens in a new tab)</span>}
     </a>
   )
@@ -172,5 +172,76 @@ export function Frame({ src, alt, sizes, className = '' }) {
     <div className={`frame ${className}`}>
       <Pic src={src} alt={alt} sizes={sizes} />
     </div>
+  )
+}
+
+// "Details" toggle: long text stays collapsed until asked for.
+export function Details({ id, label = 'Details', about, children }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="details">
+      <button className="details__btn" type="button" aria-expanded={open} aria-controls={id} onClick={() => setOpen((o) => !o)}>
+        <span className="details__sign" aria-hidden="true">
+          {open ? '×' : '+'}
+        </span>
+        {open ? 'Hide details' : label}
+        <span className="sr-only"> about {about}</span>
+      </button>
+      <div id={id} className={`details__panel ${open ? 'is-open' : ''}`} inert={!open}>
+        <div>{children}</div>
+      </div>
+    </div>
+  )
+}
+
+// Full screen photo viewer with captions. Esc, the close button, or a click
+// on the backdrop closes it. Arrow keys move between photos.
+export function Lightbox({ items, index, onIndex, onClose }) {
+  const ref = useRef(null)
+  useEffect(() => {
+    if (!ref.current.open) ref.current.showModal()
+  }, [])
+  const n = items.length
+  const go = (step) => onIndex((index + step + n) % n)
+  const item = items[index]
+  const img = getImage(item.src)
+  return (
+    <dialog
+      ref={ref}
+      className="lightbox"
+      aria-label="Photo viewer"
+      onClose={onClose}
+      onClick={(e) => e.target === e.currentTarget && e.currentTarget.close()}
+      onKeyDown={(e) => {
+        if (n < 2) return
+        if (e.key === 'ArrowRight') go(1)
+        if (e.key === 'ArrowLeft') go(-1)
+      }}
+    >
+      <figure className="lightbox__figure">
+        {img && <img src={img.src} srcSet={img.srcSet} sizes="92vw" alt={item.alt || item.caption || ''} />}
+        <figcaption>
+          <span className="lightbox__caption">{item.caption}</span>
+          {n > 1 && (
+            <span className="lightbox__count">
+              {index + 1} / {n}
+            </span>
+          )}
+        </figcaption>
+      </figure>
+      {n > 1 && (
+        <>
+          <button className="lightbox__nav lightbox__nav--prev" type="button" aria-label="Previous photo" onClick={() => go(-1)}>
+            ‹
+          </button>
+          <button className="lightbox__nav lightbox__nav--next" type="button" aria-label="Next photo" onClick={() => go(1)}>
+            ›
+          </button>
+        </>
+      )}
+      <button className="lightbox__close" type="button" aria-label="Close photo viewer" onClick={() => ref.current.close()}>
+        ×
+      </button>
+    </dialog>
   )
 }
