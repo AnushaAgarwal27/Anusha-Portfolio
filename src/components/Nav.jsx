@@ -1,6 +1,9 @@
 import { useState } from 'react'
-import { nav, site, contact, stickers } from '../data/content.js'
-import { Pic } from './bits.jsx'
+import { nav, site, contact } from '../data/content.js'
+import { galleryKeys } from '../lib/images.js'
+
+// The Gallery link only exists while there are paintings in /assets/gallery/.
+const links = nav.filter((l) => l.href !== '#gallery' || galleryKeys.length > 0)
 
 export default function Nav() {
   const [open, setOpen] = useState(false)
@@ -12,7 +15,7 @@ export default function Nav() {
       </a>
       <nav className="nav" aria-label="Main">
         <a className="nav__brand" href="#top" onClick={close}>
-          <Pic src="strawberry" alt={stickers.strawberry} sizes="32px" eager />
+          <span className="nav__dab" aria-hidden="true" />
           <span>{site.name}</span>
         </a>
         <button
@@ -25,7 +28,7 @@ export default function Nav() {
           {open ? 'Close' : 'Menu'}
         </button>
         <ul id="nav-links" className={`nav__links ${open ? 'is-open' : ''}`}>
-          {nav.map((l) => (
+          {links.map((l) => (
             <li key={l.href}>
               <a href={l.href} onClick={close}>
                 {l.label}

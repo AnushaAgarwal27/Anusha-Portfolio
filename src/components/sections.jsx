@@ -1,15 +1,12 @@
-import { about, contact, contactSection, experience, eyesBanner, gallery, nowBuilding, site, skills, stickers } from '../data/content.js'
+import { about, contact, contactSection, experience, gallery, site, skills } from '../data/content.js'
 import { galleryKeys, getImage } from '../lib/images.js'
 import { tornClip } from '../lib/paper.js'
-import { Brush, Button, InkLink, Photo, Pic, SectionHeading, Sticker, Tape, TornEdge } from './bits.jsx'
+import { Brush, Button, Frame, InkLink, SectionHeading, Tape, TornEdge } from './bits.jsx'
 
 export function About() {
+  const { glance } = about
   return (
     <section className="section wrap about" aria-labelledby="about">
-      <div className="about__media reveal" style={{ '--r': '-2.2deg' }}>
-        <Photo src={about.image.src} alt={about.image.alt} caption={about.imageCaption} rotate={0} sizes="(min-width: 900px) 400px, 80vw" />
-        <Sticker src="strawberry" className="about__berry" depth={0.07} sizes="90px" />
-      </div>
       <div className="about__text">
         <SectionHeading id="about">{about.heading}</SectionHeading>
         {about.paragraphs.map((t) => (
@@ -17,35 +14,21 @@ export function About() {
             {t}
           </p>
         ))}
-        <p className="about__signoff reveal">{about.signoff}</p>
-
-        {nowBuilding.show && (
-          <aside className="now reveal" style={{ '--r': '1.4deg' }} aria-label={nowBuilding.label}>
-            <Tape className="tape--a" />
-            <div className="now__art">
-              <Sticker src="cassette" depth={0} sizes="150px" />
-            </div>
-            <p>
-              <span className="now__label">{nowBuilding.label}</span>
-              <span className="now__text">{nowBuilding.text}</span>
-            </p>
-          </aside>
-        )}
       </div>
-    </section>
-  )
-}
-
-export function EyesBanner() {
-  return (
-    <div className="eyes">
-      <div className="eyes__inner reveal" style={{ '--r': '-0.8deg' }}>
+      <aside className="glance reveal" style={{ '--r': '1.3deg' }} aria-labelledby="glance">
+        <div className="glance__paper" style={{ clipPath: tornClip(7, { depth: 8 }) }} aria-hidden="true" />
         <Tape className="tape--a" />
-        <Tape className="tape--b" />
-        <Pic src="eyes-banner" alt={stickers['eyes-banner']} sizes="(min-width: 1100px) 1040px, 96vw" />
-        {eyesBanner.note && <p className="eyes__note">{eyesBanner.note}</p>}
-      </div>
-    </div>
+        <h3 id="glance">{glance.heading}</h3>
+        <dl>
+          {glance.items.map((it) => (
+            <div key={it.label}>
+              <dt>{it.label}</dt>
+              <dd>{it.text}</dd>
+            </div>
+          ))}
+        </dl>
+      </aside>
+    </section>
   )
 }
 
@@ -67,7 +50,7 @@ export function Experience() {
                 {job.role}
                 {job.place && <span className="job__place">{job.place}</span>}
               </p>
-              <ul className="berries">
+              <ul className="dabs">
                 {job.bullets.map((b) => (
                   <li key={b}>{b}</li>
                 ))}
@@ -94,76 +77,62 @@ const prettyName = (key) =>
     .replace(/\.[^.]+$/, '')
     .replace(/[-_]+/g, ' ')
 
-// Reads only from /assets/gallery/. Empty folder shows the placeholder.
+// Reads only from /assets/gallery/. While that folder is empty the whole
+// section (and its nav link) is hidden.
 export function Gallery() {
+  if (galleryKeys.length === 0) return null
   return (
     <section className="section wrap" aria-labelledby="gallery">
       <SectionHeading id="gallery" variant={0} tone="olive">
         {gallery.heading}
       </SectionHeading>
-      {galleryKeys.length === 0 ? (
-        <div className="studio reveal" style={{ '--r': '-1deg' }}>
-          <Tape className="tape--a" />
-          <Tape className="tape--b" />
-          <div className="studio__sheet" style={{ clipPath: tornClip(31, { depth: 9 }) }}>
-            <div className="studio__swatches" aria-hidden="true">
-              <Brush variant={0} />
-              <Brush variant={1} />
-              <Brush variant={2} />
-              <Brush variant={0} />
-            </div>
-            <p className="studio__title">{gallery.emptyTitle}</p>
-            <p className="studio__text">{gallery.emptyText}</p>
-          </div>
-        </div>
-      ) : (
-        <>
-          <p className="section__intro reveal">{gallery.intro}</p>
-          <ul className="gallery">
-            {galleryKeys.map((key, i) => {
-              const file = key.split('/').pop()
-              const cap = gallery.captions[file] || {}
-              const title = cap.title || prettyName(key)
-              return (
-                <li key={key} className="reveal">
-                  <a href={getImage(key).src} target="_blank" rel="noopener noreferrer" aria-label={`${title}, open full size in a new tab`}>
-                    <Photo
-                      src={key}
-                      alt={cap.alt || `Painting: ${title}`}
-                      caption={cap.note ? `${title}. ${cap.note}` : title}
-                      rotate={[-1.5, 1, -0.6, 1.8][i % 4]}
-                      sizes="(min-width: 900px) 360px, 90vw"
-                    />
-                  </a>
-                </li>
-              )
-            })}
-          </ul>
-        </>
-      )}
+      <p className="section__intro reveal">{gallery.intro}</p>
+      <ul className="gallery">
+        {galleryKeys.map((key) => {
+          const cap = gallery.captions[key.split('/').pop()] || {}
+          const title = cap.title || prettyName(key)
+          return (
+            <li key={key} className="reveal">
+              <a href={getImage(key).src} target="_blank" rel="noopener noreferrer" aria-label={`${title}, open full size in a new tab`}>
+                <Frame src={key} alt={cap.alt || `Painting: ${title}`} sizes="(min-width: 900px) 360px, 90vw" />
+              </a>
+              <p className="gallery__caption">
+                {title}
+                {cap.note && <span>{cap.note}</span>}
+              </p>
+            </li>
+          )
+        })}
+      </ul>
     </section>
   )
 }
 
 export function Skills() {
+  const tones = ['cobalt', 'sienna', 'olive']
   return (
     <section className="section wrap" aria-labelledby="skills">
       <SectionHeading id="skills" variant={2}>
         {skills.heading}
       </SectionHeading>
-      <div className="skills">
-        {skills.groups.map((g, i) => (
-          <div key={g.label} className="skillset reveal" style={{ '--r': `${[-0.8, 0.6, -0.4, 0.9, -0.6][i % 5]}deg` }}>
-            <div className="skillset__paper" style={{ clipPath: tornClip(i + 51, { depth: 5 }) }} aria-hidden="true" />
-            <Tape className="tape--a" />
-            <h3>{g.label}</h3>
-            <ul className={`chips chips--${['cobalt', 'sienna', 'olive', 'cobalt', 'sienna'][i % 5]}`}>
-              {g.items.map((s) => (
-                <li key={s}>{s}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
+      <div className="skillsheet reveal" style={{ '--r': '-0.3deg' }}>
+        <div className="skillsheet__paper" style={{ clipPath: tornClip(51, { depth: 8, steps: 40 }) }} aria-hidden="true" />
+        <Tape className="tape--a" />
+        <Tape className="tape--b" />
+        <dl>
+          {skills.groups.map((g, i) => (
+            <div key={g.label} className="skillrow">
+              <dt>{g.label}</dt>
+              <dd>
+                <ul className={`chips chips--${tones[i % tones.length]}`}>
+                  {g.items.map((s) => (
+                    <li key={s}>{s}</li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   )
@@ -174,33 +143,28 @@ export function Contact() {
     <section className="band band--cobalt section contact" aria-labelledby="contact">
       <TornEdge seed={61} />
       <div className="wrap contact__inner">
-        <div className="contact__art">
-          <Sticker src="coffee" depth={0.025} sizes="(min-width: 900px) 380px, 240px" />
-        </div>
-        <div>
-          <h2 className="h2 h2--cream reveal" id="contact">
-            <span className="h2__text">{contactSection.heading}</span>
-            <Brush className="h2__stroke" variant={1} />
-          </h2>
-          <p className="contact__text reveal">{contactSection.text}</p>
-          <p className="contact__email reveal">
-            <a className="ink" href={`mailto:${contact.email}`}>
-              {contact.email}
-            </a>
-          </p>
-          <ul className="contact__links reveal">
-            <li>
-              <span>LinkedIn</span>
-              <InkLink url={contact.linkedin}>{contact.linkedinLabel}</InkLink>
-            </li>
-            <li>
-              <span>GitHub</span>
-              <InkLink url={contact.github}>{contact.githubLabel}</InkLink>
-            </li>
-          </ul>
-          <div className="contact__cta reveal">
-            <Button href={contact.resume}>Resume (PDF)</Button>
-          </div>
+        <h2 className="h2 h2--cream reveal" id="contact">
+          <span className="h2__text">{contactSection.heading}</span>
+          <Brush className="h2__stroke" variant={1} />
+        </h2>
+        <p className="contact__text reveal">{contactSection.text}</p>
+        <p className="contact__email reveal">
+          <a className="ink" href={`mailto:${contact.email}`}>
+            {contact.email}
+          </a>
+        </p>
+        <ul className="contact__links reveal">
+          <li>
+            <span>LinkedIn</span>
+            <InkLink url={contact.linkedin}>{contact.linkedinLabel}</InkLink>
+          </li>
+          <li>
+            <span>GitHub</span>
+            <InkLink url={contact.github}>{contact.githubLabel}</InkLink>
+          </li>
+        </ul>
+        <div className="contact__cta reveal">
+          <Button href={contact.resume}>Resume (PDF)</Button>
         </div>
       </div>
     </section>

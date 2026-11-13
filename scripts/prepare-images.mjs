@@ -1,13 +1,13 @@
 // Prepares every image the site uses. Runs automatically before `npm run dev`
 // and `npm run build`, or by hand with `npm run images`.
 //
-//   assets/*.png               originals (never modified)
-//   assets/cutouts/*.png       transparent copies of the illustrations
+//   assets/hero.png            original portrait (never modified)
+//   assets/cutouts/hero.png    transparent copy of the portrait
 //   public/assets/img/**       compressed WebP files the site actually loads
 //   public/assets/resume.pdf   copy of the resume PDF found in assets/
 //   src/data/images.generated.json   sizes + srcsets, read by src/lib/images.js
 //
-// To hand-fix a cutout, edit or replace the PNG in assets/cutouts/ (for example
+// To hand-fix the cutout, edit or replace the PNG in assets/cutouts/ (for example
 // with rembg). The script keeps an existing cutout unless the original is newer.
 
 import sharp from 'sharp'
@@ -23,18 +23,12 @@ const OUT_IMG = path.join(OUT, 'img')
 const MANIFEST = path.join(root, 'src', 'data', 'images.generated.json')
 const force = process.argv.includes('--force')
 
-// Illustrations that get their cream background removed.
-// `holes` also clears paper-coloured areas fully enclosed by the subject.
+// The only illustration on the site: the hero portrait. Its cream background
+// is removed. `holes` also clears paper-coloured areas enclosed by the subject
+// (for example between an arm and the body).
 const ILLUSTRATIONS = {
-  hero: { widths: [560, 1100], holes: true },
-  'eyes-banner': { widths: [800, 1600] },
-  laptop: { widths: [320, 640] },
-  coffee: { widths: [320, 640], holes: true },
-  strawberry: { widths: [96, 240, 480] },
-  cassette: { widths: [320, 640], holes: true },
+  hero: { widths: [560, 900, 1400], holes: true },
 }
-// Illustrations kept on their painted paper background (shown as taped photos).
-const FRAMED = { 'portrait-2': { widths: [480, 900] } }
 
 const IMAGE_EXT = /\.(png|jpe?g|webp|avif)$/i
 const mtime = (f) => (fs.existsSync(f) ? fs.statSync(f).mtimeMs : 0)
@@ -179,11 +173,6 @@ async function main() {
     }
     await toWebp(cut, name, opt.widths, manifest, { quality: 84 })
   }
-  for (const [name, opt] of Object.entries(FRAMED)) {
-    const src = path.join(ASSETS, `${name}.png`)
-    if (fs.existsSync(src)) await toWebp(src, name, opt.widths, manifest, { quality: 82 })
-  }
-
   // Project screenshots: assets/projects/<name>/<file>
   for (const src of walk(path.join(ASSETS, 'projects'))) {
     await toWebp(src, path.relative(ASSETS, src).split(path.sep).join('/'), [640, 1280], manifest)
@@ -197,26 +186,6 @@ async function main() {
     gallery.push(key)
   }
   manifest.__gallery = gallery
-
-  // Favicon + touch icon from the strawberry.
-  const berry = path.join(CUTOUTS, 'strawberry.png')
-  if (fs.existsSync(berry)) {
-    for (const [file, size, bg] of [
-      ['favicon.png', 64, { r: 0, g: 0, b: 0, alpha: 0 }],
-      ['apple-touch-icon.png', 180, '#F3E6CC'],
-    ]) {
-      const dest = path.join(OUT, file)
-      if (fresh(berry, [dest])) continue
-      const inner = Math.round(size * (file === 'favicon.png' ? 1 : 0.78))
-      const buf = await sharp(berry)
-        .resize({ width: inner, height: inner, fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-        .toBuffer()
-      await sharp({ create: { width: size, height: size, channels: 4, background: bg } })
-        .composite([{ input: buf }])
-        .png()
-        .toFile(dest)
-    }
-  }
 
   // Resume: assets/resume.pdf, or the first PDF with "resume" in its name.
   const pdf =

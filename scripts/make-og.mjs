@@ -1,5 +1,7 @@
-// Builds the link preview image (public/og.png, 1200x630) from the hero painting.
-// Run with `npm run og` after changing your name, tagline, or hero.png.
+// Builds the link preview image (public/og.png, 1200x630) from the hero painting,
+// plus the favicon: a cobalt "A" in the heading font (public/favicon.png and
+// public/apple-touch-icon.png). Run with `npm run og` after changing your name
+// or hero.png. The results are committed, so the site build does not need this.
 import { chromium } from 'playwright'
 import sharp from 'sharp'
 import path from 'node:path'
@@ -25,7 +27,6 @@ const html = `<!doctype html><html><head>
   p.tag { font: 40px/1.1 'Caveat Brush'; margin-top: 34px; white-space: nowrap }
   .patch { position: absolute; right: 60px; top: 110px; width: 500px; height: 560px; color: #1F3FA3; overflow: visible }
   .me { position: absolute; right: 20px; bottom: -8px; width: 640px; filter: drop-shadow(0 10px 14px rgba(40,20,5,.25)) }
-  .berry { position: absolute; left: 600px; top: 60px; width: 120px; transform: rotate(-14deg); filter: drop-shadow(0 6px 6px rgba(60,35,10,.25)) }
 </style></head><body>
 <svg width="0" height="0" style="position:absolute"><defs>
   <filter id="ink" x="-3%" y="-8%" width="106%" height="116%"><feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
@@ -35,7 +36,6 @@ const html = `<!doctype html><html><head>
 ${[0, 1, 2, 3, 4, 5, 6].map((i) => `<path d="M${34 + (i % 3) * 9} ${40 + i * 57} C 130 ${30 + i * 57}, 270 ${54 + i * 57}, ${368 - (i % 2) * 14} ${40 + i * 57}"/>`).join('')}
 </g></svg>
 <img class="me" src="${await dataUrl('hero.png', 900)}">
-<img class="berry" src="${await dataUrl('strawberry.png', 300)}">
 <div class="text">
   <div class="eyebrow">Software engineer who paints</div>
   <h1>${hero.name.join('<br>')}</h1>
@@ -50,5 +50,23 @@ const page = await browser.newPage({ viewport: { width: 1200, height: 630 } })
 await page.setContent(html, { waitUntil: 'networkidle' })
 await page.evaluate(() => document.fonts.ready)
 await page.screenshot({ path: path.join(root, 'public', 'og.png') })
+
+// Favicon: the first letter of the name, hand-lettered in cobalt on cream paper.
+const letter = hero.name[0][0]
+const icon = (size) => `<!doctype html><html><head>
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One+SC&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0 } html, body { background: transparent }
+  .i { width: ${size}px; height: ${size}px; display: grid; place-items: center; background: #F3E6CC; border-radius: ${size * 0.2}px }
+  span { font: 400 ${size * 0.86}px/1 'Bowlby One SC'; color: #1F3FA3; transform: rotate(-6deg) translateY(${size * 0.02}px); filter: url(#w) }
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><filter id="w"><feTurbulence type="fractalNoise" baseFrequency="${3 / size}" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="${size * 0.05}" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+<div class="i"><span>${letter}</span></div></body></html>`
+for (const [file, size] of [['favicon.png', 96], ['apple-touch-icon.png', 180]]) {
+  await page.setViewportSize({ width: size, height: size })
+  await page.setContent(icon(size), { waitUntil: 'networkidle' })
+  await page.evaluate(() => document.fonts.ready)
+  await page.screenshot({ path: path.join(root, 'public', file), omitBackground: true })
+}
 await browser.close()
-console.log('Wrote public/og.png')
+console.log('Wrote public/og.png, public/favicon.png, public/apple-touch-icon.png')

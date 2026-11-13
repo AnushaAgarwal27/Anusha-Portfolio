@@ -1,5 +1,5 @@
 import { hero } from '../data/content.js'
-import { Brush, Button, PaintPatch, Pic, Sticker, TornEdge } from './bits.jsx'
+import { Brush, Button, PaintPatch, Pic, TornEdge } from './bits.jsx'
 
 export default function Hero() {
   return (
@@ -23,17 +23,8 @@ export default function Hero() {
         </div>
 
         <div className="hero__art">
-          <PaintPatch className="hero__patch" />
-          <Pic className="hero__portrait" src={hero.image.src} alt={hero.image.alt} sizes="(min-width: 900px) 560px, 92vw" eager />
-          <p className="hero__note" aria-hidden="true">
-            hi, that’s me
-            <svg viewBox="0 0 60 40" focusable="false">
-              <path d="M4 6 C 22 4, 40 12, 50 30 M50 30 L38 26 M50 30 L52 17" />
-            </svg>
-          </p>
-          <Sticker src="strawberry" className="hero__sticker hero__sticker--berry" depth={0.08} sizes="120px" eager />
-          <Sticker src="laptop" className="hero__sticker hero__sticker--laptop" depth={-0.06} sizes="170px" eager />
-          <Sticker src="coffee" className="hero__sticker hero__sticker--coffee" depth={0.05} sizes="170px" eager />
+          <PaintPatch className="hero__patch" data-depth="0.05" />
+          <Pic className="hero__portrait" src={hero.image.src} alt={hero.image.alt} sizes="(min-width: 900px) 720px, 96vw" eager />
         </div>
       </div>
 

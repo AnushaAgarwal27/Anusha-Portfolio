@@ -1,7 +1,6 @@
-import { useRef } from 'react'
 import { getImage } from '../lib/images.js'
 import { tornPath } from '../lib/paper.js'
-import { site, stickers } from '../data/content.js'
+import { site } from '../data/content.js'
 
 // SVG filters used for rough paint edges and dry brush streaks.
 export function SvgDefs() {
@@ -54,53 +53,6 @@ export function Pic({ src, alt, sizes = '100vw', eager = false, className }) {
   )
 }
 
-// A painted sticker you can drag around. Wiggles on hover, settles on release.
-export function Sticker({ src, className = '', depth = 0.05, sizes = '180px', eager }) {
-  const grab = useRef(null)
-  const p = useRef({ x: 0, y: 0, ox: 0, oy: 0, on: false })
-
-  const down = (e) => {
-    if (e.button) return
-    const s = p.current
-    s.on = true
-    s.ox = e.clientX - s.x
-    s.oy = e.clientY - s.y
-    grab.current.setPointerCapture(e.pointerId)
-    grab.current.classList.remove('is-settling')
-    grab.current.classList.add('is-dragging')
-  }
-  const move = (e) => {
-    const s = p.current
-    if (!s.on) return
-    s.x = e.clientX - s.ox
-    s.y = e.clientY - s.oy
-    grab.current.style.setProperty('--dx', `${s.x}px`)
-    grab.current.style.setProperty('--dy', `${s.y}px`)
-  }
-  const up = () => {
-    if (!p.current.on) return
-    p.current.on = false
-    grab.current.classList.remove('is-dragging')
-    grab.current.classList.add('is-settling')
-  }
-
-  return (
-    <div className={`sticker ${className}`} data-depth={depth}>
-      <div
-        ref={grab}
-        className="sticker__grab"
-        onPointerDown={down}
-        onPointerMove={move}
-        onPointerUp={up}
-        onPointerCancel={up}
-        onAnimationEnd={(e) => e.currentTarget.classList.remove('is-settling')}
-      >
-        <Pic src={src} alt={stickers[src] || ''} sizes={sizes} eager={eager} />
-      </div>
-    </div>
-  )
-}
-
 export const Tape = ({ className = '' }) => <span className={`tape ${className}`} aria-hidden="true" />
 
 // A dry brush stroke. Colour comes from CSS `color`.
@@ -118,20 +70,31 @@ export function Brush({ className = '', variant = 0 }) {
 }
 
 // A block of stacked brush strokes, used as a painted patch of colour.
-export function PaintPatch({ className = '', rows = 7 }) {
+export function PaintPatch({ className = '', rows = 7, ...rest }) {
   const lines = Array.from({ length: rows }, (_, i) => {
     const y = 40 + (i * 340) / (rows - 1)
     const w = i % 2 ? 6 : -8
     return `M${34 + (i % 3) * 9} ${y} C 130 ${y - 12 + w}, 270 ${y + 14}, ${368 - (i % 2) * 14} ${y + w}`
   })
   return (
-    <svg className={`patch ${className}`} viewBox="0 0 400 420" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <svg className={`patch ${className}`} viewBox="0 0 400 420" preserveAspectRatio="none" aria-hidden="true" focusable="false" {...rest}>
       <g filter="url(#paint)" fill="none" stroke="currentColor" strokeWidth="70" strokeLinecap="round">
         {lines.map((d) => (
           <path key={d} d={d} />
         ))}
       </g>
     </svg>
+  )
+}
+
+// Three loose brush strokes used as a divider between sections.
+export function PaintDivider() {
+  return (
+    <div className="divider reveal" aria-hidden="true">
+      <Brush variant={0} />
+      <Brush variant={1} />
+      <Brush variant={2} />
+    </div>
   )
 }
 
@@ -161,37 +124,29 @@ export function SectionHeading({ children, id, variant = 0, tone = 'tomato' }) {
 }
 
 const external = (url) => /^https?:/.test(url)
+const newTab = { target: '_blank', rel: 'noopener noreferrer' }
+export const isRealLink = (url) => Boolean(url) && !/^TODO/i.test(url)
 
-export function Button({ href, children, ghost = false, download }) {
-  const ext = external(href)
+// Big painted button.
+export function Button({ href, children, ghost = false }) {
   return (
-    <a
-      className={`btn ${ghost ? 'btn--ghost' : ''}`}
-      href={href}
-      download={download}
-      {...(ext || href.endsWith('.pdf') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-    >
+    <a className={`btn ${ghost ? 'btn--ghost' : ''}`} href={href} {...(external(href) || href.endsWith('.pdf') ? newTab : {})}>
       <span>{children}</span>
     </a>
   )
 }
 
-// Text link with a hand-drawn underline. Placeholder urls become a dashed chip.
-export function InkLink({ url, children, className = '' }) {
-  if (!url || /^TODO/i.test(url)) {
-    if (!site.showPlaceholderLinks) return null
-    return (
-      <span className={`todo-link ${className}`} title={url}>
-        {children}: coming soon
-      </span>
-    )
+// Small outlined link button. Links without a real url are not rendered.
+export function LinkButton({ url, children }) {
+  if (!isRealLink(url)) {
+    return site.showPlaceholderLinks ? <span className="todo-link">{children}: coming soon</span> : null
   }
   const ext = external(url)
   return (
-    <a className={`ink ${className}`} href={url} {...(ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+    <a className="lbtn" href={url} {...(ext ? newTab : {})}>
       {children}
       {ext && (
-        <span className="ink__arrow" aria-hidden="true">
+        <span className="lbtn__arrow" aria-hidden="true">
           ↗
         </span>
       )}
@@ -200,16 +155,22 @@ export function InkLink({ url, children, className = '' }) {
   )
 }
 
-// A screenshot or painting presented as a printed photo taped to the page.
-export function Photo({ src, alt, caption, sizes, rotate = -1.2, className = '', eager }) {
+// Text link with a hand-drawn underline.
+export function InkLink({ url, children }) {
+  const ext = external(url)
   return (
-    <figure className={`photo ${className}`} style={{ '--r': `${rotate}deg` }}>
-      <Tape className="tape--a" />
-      <Tape className="tape--b" />
-      <div className="photo__print">
-        <Pic src={src} alt={alt} sizes={sizes} eager={eager} />
-      </div>
-      {caption && <figcaption className="photo__caption">{caption}</figcaption>}
-    </figure>
+    <a className="ink" href={url} {...(ext ? newTab : {})}>
+      {children}
+      {ext && <span className="sr-only"> (opens in a new tab)</span>}
+    </a>
+  )
+}
+
+// An image in a plain paper frame: thin border, soft shadow.
+export function Frame({ src, alt, sizes, className = '' }) {
+  return (
+    <div className={`frame ${className}`}>
+      <Pic src={src} alt={alt} sizes={sizes} />
+    </div>
   )
 }
