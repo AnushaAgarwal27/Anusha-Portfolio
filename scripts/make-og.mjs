@@ -5,11 +5,13 @@
 import { chromium } from 'playwright'
 import sharp from 'sharp'
 import path from 'node:path'
+import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { hero, site } from '../src/data/content.js'
 
-// Keep in sync with the palette at the top of src/styles.css.
-const C = { forest: '#1F4D3A', sage: '#A9BBA0', paper: '#F4EEDC', butter: '#E0B04C', ink: '#1E2B24' }
+// Read the same CSS variables used by the site.
+const palette = fs.readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
+const C = Object.fromEntries([...palette.matchAll(/--(forest|moss|sage|leaf|paper):\s*(#[\da-f]+)/gi)].map((m) => [m[1], m[2]]))
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const dataUrl = async (file, width) =>
@@ -22,17 +24,17 @@ const fonts =
 const html = `<!doctype html><html><head>${fonts}
 <style>
   * { box-sizing: border-box; margin: 0 }
-  body { width: 1200px; height: 630px; overflow: hidden; background: ${C.paper}; position: relative; font-family: 'DM Mono', monospace; color: ${C.ink} }
+  body { width: 1200px; height: 630px; overflow: hidden; background: ${C.paper}; position: relative; font-family: 'DM Mono', monospace; color: ${C.moss} }
   .grain { position: absolute; inset: 0; opacity: .5; mix-blend-mode: multiply; z-index: 9;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .3 0 0 0 0 .2 0 0 0 .5 -.12'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E") }
   .text { position: absolute; left: 70px; top: 120px; width: 600px }
   .eyebrow { font-size: 21px; letter-spacing: .08em; text-transform: uppercase; opacity: .8 }
   h1 { position: relative; z-index: 1; font: 900 118px/.9 'Fraunces'; letter-spacing: -.03em; color: ${C.forest}; margin: 18px 0 0; transform: rotate(-2deg); transform-origin: left }
   h1 i { font-weight: 800; padding-left: .1em }
-  .stroke { width: 520px; height: 34px; margin: -22px 0 0 -8px; transform: rotate(-2deg); color: ${C.butter}; overflow: visible }
+  .stroke { width: 520px; height: 34px; margin: -22px 0 0 -8px; transform: rotate(-2deg); color: ${C.sage}; overflow: visible }
   p.tag { font: 700 44px/1.1 'Caveat'; margin-top: 30px; white-space: nowrap }
   .patch { position: absolute; right: 60px; top: 110px; width: 500px; height: 560px; color: ${C.sage}; overflow: visible }
-  .me { position: absolute; right: 20px; bottom: -8px; width: 640px; filter: drop-shadow(0 10px 14px rgba(30,43,36,.25)) }
+  .me { position: absolute; right: 20px; bottom: -8px; width: 640px; filter: drop-shadow(0 10px 14px color-mix(in srgb, ${C.moss} 25%, transparent)) }
 </style></head><body>
 <svg width="0" height="0" style="position:absolute"><defs>
   <filter id="paint" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.01 0.32" numOctaves="2" seed="11" result="s"/><feColorMatrix in="s" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -8 6.1" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in" result="c"/><feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="2" result="n"/><feDisplacementMap in="c" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G"/></filter>

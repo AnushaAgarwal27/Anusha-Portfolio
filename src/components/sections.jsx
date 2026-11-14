@@ -144,7 +144,7 @@ export function Contact() {
     <section className="band band--moss section contact" aria-labelledby="contact">
       <TornEdge seed={61} />
       <div className="wrap contact__inner">
-        <h2 className="h2 h2--cream reveal" id="contact">
+        <h2 className="h2 h2--paper reveal" id="contact">
           <span className="h2__text">{contactSection.heading}</span>
           <Brush className="h2__stroke" variant={1} />
         </h2>

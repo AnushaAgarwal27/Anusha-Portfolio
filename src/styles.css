@@ -11,18 +11,14 @@
   --sage: #a9bba0; /* secondary accents, dividers, tags */
   --leaf: #6e8b4e; /* secondary accents */
   --paper: #f4eedc; /* page background */
-  --clay: #c26e4a; /* award tags and small accents */
-  --butter: #e0b04c; /* marker highlights and tape */
-  --ink: #1e2b24; /* text */
+  --ink: var(--moss); /* text */
 
   /* shades mixed from the palette (for contrast on small text) */
   --sheet: color-mix(in srgb, var(--paper) 45%, #fffdf7); /* lighter paper for cards */
   --ink-soft: color-mix(in srgb, var(--ink) 76%, var(--paper));
-  --clay-deep: color-mix(in srgb, var(--clay) 68%, var(--ink));
   --leaf-deep: color-mix(in srgb, var(--leaf) 68%, var(--ink));
-  --moss-deep: color-mix(in srgb, var(--moss) 78%, black);
   --line: color-mix(in srgb, var(--ink) 26%, transparent);
-  --shade: 30, 43, 36; /* ink as r, g, b for shadows */
+  --shade: 20, 53, 42; /* ink as r, g, b for shadows */
 
   /* type */
   --display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
@@ -59,7 +55,7 @@ body {
   /* uneven washes so the paper never looks like a flat fill */
   background-image: radial-gradient(60rem 40rem at 12% 8%, color-mix(in srgb, white 40%, transparent), transparent 70%),
     radial-gradient(50rem 36rem at 92% 34%, color-mix(in srgb, var(--sage) 16%, transparent), transparent 70%),
-    radial-gradient(56rem 44rem at 20% 72%, color-mix(in srgb, var(--butter) 8%, transparent), transparent 70%);
+    radial-gradient(56rem 44rem at 20% 72%, color-mix(in srgb, var(--sage) 8%, transparent), transparent 70%);
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
@@ -97,7 +93,7 @@ button {
 }
 
 :focus-visible {
-  outline: 3px solid var(--clay-deep);
+  outline: 3px solid var(--forest);
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -172,7 +168,7 @@ button {
   color: var(--forest);
   margin-bottom: 1.4rem;
 }
-/* butter marker swipe behind the lower half of the word */
+/* sage marker swipe behind the lower half of the word */
 .h2__stroke {
   position: absolute;
   left: -4%;
@@ -180,12 +176,12 @@ button {
   width: 110%;
   height: 0.42em;
   z-index: -1;
-  color: var(--butter);
+  color: var(--sage);
 }
-.h2--cream {
+.h2--paper {
   color: var(--paper);
 }
-.h2--cream .h2__stroke {
+.h2--paper .h2__stroke {
   color: var(--leaf);
 }
 .brush {
@@ -204,14 +200,14 @@ button {
 }
 
 /* -------------------------------------------------------------- links --- */
-/* hand-drawn underline. The stroke colours inside the two SVGs below mirror
-   --clay and --butter (CSS variables cannot reach inside a data URI). */
+/* Hand-drawn underline inherits its colour from the shared palette. */
 .ink {
   color: var(--forest);
-  text-decoration: none;
   padding-bottom: 0.2em;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'%3E%3Cpath d='M1 5 C 20 1 40 7 60 4 S 100 2 119 5' fill='none' stroke='%23C26E4A' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E")
-    no-repeat 0 100% / 100% 0.4em;
+  text-decoration: underline;
+  text-decoration-color: var(--leaf);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
 }
 .ink:hover {
   color: var(--moss);
@@ -265,7 +261,7 @@ button {
 /* brush stroke that sweeps across on hover */
 .btn::after {
   inset: 12% -3%;
-  background: var(--clay-deep);
+  background: var(--forest);
   filter: url(#dry);
   clip-path: inset(0 100% 0 0);
   transition: clip-path 0.45s var(--ease-soft);
@@ -287,7 +283,7 @@ button {
   filter: url(#ink);
 }
 .btn--ghost::after {
-  background: var(--butter);
+  background: var(--sage);
 }
 .btn--ghost:hover,
 .btn--ghost:focus-visible {
@@ -327,7 +323,7 @@ button {
   width: 5.2rem;
   height: 1.55rem;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), transparent 30%, rgba(var(--shade), 0.06)),
-    color-mix(in srgb, var(--butter) 72%, transparent);
+    color-mix(in srgb, var(--sage) 72%, transparent);
   clip-path: polygon(0 12%, 3% 0, 6% 14%, 9% 2%, 12% 12%, 100% 4%, 97% 22%, 100% 40%, 96% 60%, 100% 80%, 97% 100%, 4% 96%, 0 82%, 3% 62%, 0 44%, 3% 28%);
   mix-blend-mode: multiply;
 }
@@ -496,7 +492,7 @@ button {
   width: 106%;
   height: 0.3em;
   z-index: -1;
-  color: var(--butter);
+  color: var(--sage);
 }
 .hero__tagline {
   max-width: 27rem;
@@ -632,7 +628,7 @@ button {
   gap: 0.05rem;
 }
 .hero__fact-label {
-  color: var(--clay-deep);
+  color: var(--forest);
 }
 .hero__fact-text {
   font-weight: 600;
@@ -699,7 +695,7 @@ button {
   font-size: 0.74rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--clay-deep);
+  color: var(--forest);
 }
 .glance dd {
   margin-top: 0.1rem;
@@ -729,7 +725,7 @@ button {
 .divider .brush:nth-of-type(3) {
   width: 30%;
   margin-left: 8%;
-  color: var(--butter);
+  color: var(--sage);
 }
 .divider__tile {
   width: 6.5rem;
@@ -749,7 +745,7 @@ button {
 }
 .job__dates {
   margin-bottom: 0.9rem;
-  color: var(--clay-deep);
+  color: var(--forest);
   font-weight: 500;
 }
 .job__card {
@@ -949,7 +945,7 @@ button {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: var(--clay-deep);
+  background: var(--forest);
   border-radius: 3px;
   filter: url(#rough);
 }
@@ -979,7 +975,7 @@ button {
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--clay-deep);
+  color: var(--forest);
 }
 .highlights mark {
   font-family: var(--mono);
@@ -987,11 +983,11 @@ button {
   font-size: 0.86rem;
   color: var(--ink);
   padding: 0 0.25em;
-  /* butter marker */
+  /* sage marker */
   background: linear-gradient(
     transparent 48%,
-    color-mix(in srgb, var(--butter) 70%, transparent) 48%,
-    color-mix(in srgb, var(--butter) 70%, transparent) 92%,
+    color-mix(in srgb, var(--sage) 70%, transparent) 48%,
+    color-mix(in srgb, var(--sage) 70%, transparent) 92%,
     transparent 92%
   );
 }
@@ -1019,7 +1015,7 @@ button {
   cursor: pointer;
 }
 .details__btn:hover {
-  color: var(--clay-deep);
+  color: var(--forest);
   border-bottom-color: currentColor;
 }
 .details__sign {
@@ -1142,7 +1138,7 @@ button {
   font-size: 1.45rem;
   line-height: 1.1;
   color: var(--moss);
-  background: color-mix(in srgb, var(--butter) 55%, var(--sheet));
+  background: color-mix(in srgb, var(--sage) 55%, var(--sheet));
   border: 2px solid var(--forest);
   border-radius: 5px 10px 6px 12px;
   box-shadow: 0 3px 0 rgba(var(--shade), 0.3);
@@ -1170,7 +1166,7 @@ button {
   place-items: center;
 }
 .lightbox::backdrop {
-  background: color-mix(in srgb, var(--moss-deep) 92%, transparent);
+  background: color-mix(in srgb, var(--moss) 92%, transparent);
 }
 .lightbox__figure {
   display: grid;
@@ -1237,7 +1233,7 @@ button {
   right: 0.5rem;
 }
 .lightbox :focus-visible {
-  outline-color: var(--butter);
+  outline-color: var(--sage);
 }
 
 /* ------------------------------------------------------------ gallery --- */
@@ -1343,7 +1339,7 @@ button {
 .contact .ink,
 .footer .ink {
   color: var(--paper);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'%3E%3Cpath d='M1 5 C 20 1 40 7 60 4 S 100 2 119 5' fill='none' stroke='%23E0B04C' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  text-decoration-color: var(--sage);
 }
 .contact .ink:hover,
 .footer .ink:hover {
@@ -1364,7 +1360,7 @@ button {
   font-size: 0.74rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--butter);
+  color: var(--sage);
 }
 .contact__inner .contact__cta {
   margin-top: 2.6rem;
@@ -1377,16 +1373,16 @@ button {
   filter: url(#rough) drop-shadow(0 3px 0 rgba(0, 0, 0, 0.3));
 }
 .contact .btn::after {
-  background: var(--butter);
+  background: var(--sage);
 }
 .contact :focus-visible,
 .footer :focus-visible {
-  outline-color: var(--butter);
+  outline-color: var(--sage);
 }
 
 .footer {
   padding: 1.4rem 1.1rem 2rem;
-  background: var(--moss-deep);
+  background: var(--moss);
   color: var(--paper);
   font-family: var(--mono);
   font-size: 0.78rem;
@@ -1472,7 +1468,7 @@ button {
   .nav__links a {
     padding: 0.4rem 0;
     font-size: 0.8rem;
-    background: linear-gradient(var(--clay), var(--clay)) no-repeat 0 100% / 0% 2px;
+    background: linear-gradient(var(--leaf), var(--leaf)) no-repeat 0 100% / 0% 2px;
     transition: background-size 0.35s var(--ease-soft), color 0.2s;
   }
   .nav__links a:hover,
@@ -1564,7 +1560,7 @@ button {
     width: 1.05rem;
     height: 1.05rem;
     border-radius: 50%;
-    background: var(--clay);
+    background: var(--leaf);
     border: 3px solid var(--paper);
   }
 
