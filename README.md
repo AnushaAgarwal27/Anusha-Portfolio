@@ -1,6 +1,6 @@
 # Anusha Agarwal: portfolio
 
-A painted zine style portfolio built with Vite and React. No UI libraries: the torn paper, brush strokes, paint dividers, and grain are all CSS and SVG. The only illustration is the hero portrait.
+A painted zine style portfolio built with Vite and React. No UI libraries: the torn paper, brush strokes, paint dividers, and grain are all CSS and SVG. The only illustration is the hero portrait. This is a personal collection of my projects, experiences, and interests.
 
 ## Run it
 
@@ -33,7 +33,7 @@ Everything you can read on the site lives in **`src/data/content.js`**: name, ta
 - **Links:** a link only shows up as a button when it has a real `url`. Empty ones are hidden.
 - **Handwritten notes:** `hero.note` and the `note` on a project screenshot. Only write notes that are true.
 - **Skills:** each entry in `skills.groups` is one row of tags.
-- **Colours:** the whole palette is a short list of variables at the top of `src/styles.css`.
+- **Colours:** forest `#1F4D3A`, moss `#14352A`, sage `#A9BBA0`, leaf `#6E8B4E`, and paper `#F4EEDC` are defined once at the top of `src/styles.css`. The link preview generator reads these same variables.
 - **Find what is left:** search `content.js` for `TODO`.
 
 ## Images and optional extras
@@ -48,7 +48,7 @@ assets/
   gallery/                        your own paintings (optional)
   signature.png                   replaces the text name in the nav (optional)
   fonts/handwriting.woff2         replaces Caveat for handwritten notes (optional)
-  Resume-Anusha Agarwal.pdf       served at /assets/resume.pdf
+  Resume-Anusha Agarwal.pdf       bundled by Vite for the resume links
   (other .png files)              earlier illustrations, kept but never used
 ```
 
@@ -60,7 +60,7 @@ The site works with every optional folder empty.
 - **Gallery:** drop paintings into `assets/gallery/`. While that folder is empty, the Gallery section and its nav link are hidden.
 - **Signature:** `assets/signature.png` (dark ink on a white or transparent background works best) replaces the text name in the nav.
 - **Handwriting font:** `assets/fonts/handwriting.woff2` replaces Caveat for every handwritten note and label.
-- **Resume:** replace the PDF in `assets/`. Any PDF with "resume" in its name works.
+- **Resume:** replace `assets/Resume-Anusha Agarwal.pdf`. All three résumé links use the source PDF through Vite, which emits a deployable URL including any configured base path. If you rename the PDF, update `contact.resume` in `src/data/content.js`. The image pipeline also keeps `/assets/resume.pdf` available for older bookmarks.
 - **Favicon and link preview:** `public/favicon.png`, `public/apple-touch-icon.png`, and `public/og.png` are made by `npm run og` and committed. Rerun it if you change your name or the portrait.
 
 After adding or changing anything in `assets/`, restart `npm run dev` (or run `npm run images`).
