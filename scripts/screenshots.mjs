@@ -12,6 +12,8 @@ fs.mkdirSync(out, { recursive: true })
 const sizes = [
   { name: 'desktop', width: 1440, height: 900, slice: 1100 },
   { name: 'phone', width: 390, height: 844, slice: 1400 },
+  { name: 'phone-small', width: 320, height: 740, slice: 1400 },
+  { name: 'tablet', width: 768, height: 1024, slice: 1400 },
 ]
 
 let failed = false
@@ -35,7 +37,9 @@ for (const s of sizes) {
   await page.waitForTimeout(900)
 
   const broken = await page.evaluate(() =>
-    [...document.images].filter((i) => !i.complete || i.naturalWidth === 0).map((i) => i.currentSrc || i.src),
+    [...document.images]
+      .filter((i) => i.getClientRects().length > 0 && (!i.complete || i.naturalWidth === 0))
+      .map((i) => i.currentSrc || i.src),
   )
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
 
@@ -55,11 +59,11 @@ for (const s of sizes) {
   if (/seeking|looking for internships?|recruiter|open to (?:work|opportunities)/i.test(copy)) {
     problems.push('Job-seeking copy remains')
   }
-  if (s.name === 'phone') {
+  if (s.width < 900) {
     const menu = page.locator('button[aria-controls="nav-links"]')
     await menu.click()
     if (await menu.getAttribute('aria-expanded') !== 'true') problems.push('Phone menu did not open')
-    await page.screenshot({ path: `${out}/phone-menu.png` })
+    await page.screenshot({ path: `${out}/${s.name}-menu.png` })
     await page.getByRole('navigation').getByRole('link', { name: 'About', exact: true }).click()
     if (await menu.getAttribute('aria-expanded') !== 'false') problems.push('Phone menu did not close')
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }))

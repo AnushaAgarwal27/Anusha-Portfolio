@@ -20,7 +20,7 @@ Open http://localhost:5173. Images are prepared automatically every time you run
 | `npm run preview` | Serves the built site locally |
 | `npm run images` | Only prepares images (add `-- --force` to redo all of them) |
 | `npm run og` | Rebuilds the link preview image `public/og.png` and the favicon |
-| `npm run screenshots` | Takes desktop and phone screenshots of the running dev site into `screenshots/` |
+| `npm run screenshots` | Checks desktop, tablet, phone, and narrow phone layouts; saves screenshots into `screenshots/` |
 
 `npm run og` and `npm run screenshots` use Playwright. The first time, run `npx playwright install chromium`.
 
