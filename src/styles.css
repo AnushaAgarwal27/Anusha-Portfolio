@@ -46,6 +46,7 @@ html {
 }
 
 body {
+  position: relative;
   margin: 0;
   color: var(--ink);
   font-family: var(--serif);
@@ -57,8 +58,8 @@ body {
     radial-gradient(ellipse at 0% 5%, color-mix(in srgb, var(--sage) 34%, transparent), transparent 45%),
     radial-gradient(ellipse at 100% 35%, color-mix(in srgb, var(--leaf) 12%, transparent), transparent 45%),
     radial-gradient(ellipse at 0% 75%, color-mix(in srgb, var(--sage) 30%, transparent), transparent 45%),
-    repeating-linear-gradient(0deg, color-mix(in srgb, var(--forest) 3%, transparent) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(90deg, color-mix(in srgb, var(--forest) 2%, transparent) 0 1px, transparent 1px 5px);
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--forest) 1.5%, transparent) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--forest) 1%, transparent) 0 1px, transparent 1px 5px);
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
@@ -117,7 +118,7 @@ button {
 
 /* paper grain over everything */
 .grain {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 100;
   pointer-events: none;
@@ -528,6 +529,7 @@ button {
   z-index: 2;
   width: 100%;
   filter: drop-shadow(0 10px 14px rgba(var(--shade), 0.22));
+  mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent);
 }
 .hero__note {
   position: absolute;
@@ -1558,7 +1560,8 @@ button {
   user-select: none;
 }
 .garden-vine { position: absolute; z-index: -1; }
-.garden-vine--hero { width: 170px; right: -65px; top: 470px; opacity: .85; transform: rotate(-8deg); }
+.garden-vine--hero { display: none; }
+.garden-vine--portrait { width: 170px; right: -85px; top: 25px; opacity: .85; transform: rotate(-8deg); }
 .garden-vine--projects { width: 160px; left: -100px; top: 80px; opacity: .5; transform: scaleX(-1); }
 .about__side { position: relative; }
 .little-coffee { width: 135px; justify-self: end; margin: -1.5rem 1.5rem -1.5rem 0; position: relative; transform: rotate(8deg); }
@@ -1569,7 +1572,8 @@ button {
 .forest-friends { width: 190px; justify-self: end; margin-top: -1rem; }
 .contact :focus-visible, .footer :focus-visible { outline-color: var(--forest); }
 @media (min-width: 900px) {
-  .garden-vine--hero { width: 240px; top: -30px; left: -105px; right: auto; opacity: .85; }
+  .garden-vine--hero { display: block; width: clamp(120px, calc((100vw - 1120px) / 2 + 80px), 240px); top: -30px; left: -110px; opacity: .85; transform: rotate(-8deg); }
+  .garden-vine--portrait { display: none; }
   .garden-vine--projects { width: 220px; left: auto; right: -120px; top: 200px; opacity: .75; }
   .little-coffee { width: 160px; margin: -1rem 2rem -3rem 0; }
   .little-strawberry { width: 75px; right: 3rem; top: -1rem; }

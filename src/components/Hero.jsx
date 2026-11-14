@@ -26,6 +26,7 @@ export default function Hero() {
         </div>
 
         <div className="hero__art">
+          <Pic className="garden-vine garden-vine--portrait" src="art/money-plant.png" alt="" sizes="170px" />
           <PaintPatch className="hero__patch" data-depth="0.05" />
           <Pic className="hero__portrait" src={hero.image.src} alt={hero.image.alt} sizes="(min-width: 900px) 720px, 96vw" eager />
           {hero.note && (
