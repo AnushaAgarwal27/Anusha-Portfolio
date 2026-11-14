@@ -52,8 +52,8 @@ export const contact = {
   linkedinLabel: 'linkedin.com/in/anushaagarwal10',
   github: 'https://github.com/AnushaAgarwal27',
   githubLabel: 'github.com/AnushaAgarwal27',
-  // The site serves a copy of the PDF found in /assets (see README).
-  resume: '/assets/resume.pdf',
+  // Vite bundles the source PDF and resolves its URL for the deployment base.
+  resume: new URL('../../assets/Resume-Anusha Agarwal.pdf', import.meta.url).href,
 }
 
 export const hero = {
