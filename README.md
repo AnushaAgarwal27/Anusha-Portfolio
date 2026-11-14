@@ -1,6 +1,6 @@
 # Anusha Agarwal: portfolio
 
-A painted zine style portfolio built with Vite and React. No UI libraries: the torn paper, brush strokes, paint dividers, and grain are all CSS and SVG. The only illustration is the hero portrait. This is a personal collection of my projects, experiences, and interests.
+A painted zine style portfolio built with Vite and React. No UI libraries: paper cards, brush strokes, woven texture, and grain use CSS and SVG. A continuous paper background carries painted money-plant vines, a cup, a strawberry, and a small Totoro and soot-sprite vignette. This is a personal collection of my projects, experiences, and interests.
 
 ## Run it
 
@@ -40,16 +40,19 @@ Everything you can read on the site lives in **`src/data/content.js`**: name, ta
 
 ```
 assets/
-  hero.png                        the portrait, the only illustration on the site
+  hero.png                        the portrait
+  coffee.png, strawberry.png       original painted objects
+  art/money-plant.png              trailing botanical margin illustration
+  art/forest-friends.png           Totoro and soot sprites near Contact
   cutouts/hero.png                transparent copy, made automatically
   projects/<name>/                project screenshots
   events/<project id>/            event photos for a project (optional)
-  art/                            your own painted art (optional)
+  art/                            decorative illustrations and optional painted art
   gallery/                        your own paintings (optional)
   signature.png                   replaces the text name in the nav (optional)
   fonts/handwriting.woff2         replaces Caveat for handwritten notes (optional)
   Resume-Anusha Agarwal.pdf       bundled by Vite for the resume links
-  (other .png files)              earlier illustrations, kept but never used
+  (other .png files)              earlier illustrations, kept for reference
 ```
 
 The site works with every optional folder empty.
