@@ -14,6 +14,7 @@ const sizes = [
   { name: 'phone', width: 390, height: 844, slice: 1400 },
 ]
 
+let failed = false
 const browser = await chromium.launch()
 for (const s of sizes) {
   const page = await browser.newPage({ viewport: { width: s.width, height: s.height } })
@@ -38,6 +39,32 @@ for (const s of sizes) {
   )
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
 
+  // Every resume entry must serve the actual source PDF, not an HTML fallback.
+  const resumes = await page.locator('a').evaluateAll((links) =>
+    links.filter((a) => /resume/i.test(a.textContent)).map((a) => a.href),
+  )
+  if (resumes.length !== 3) problems.push(`Expected 3 resume links, found ${resumes.length}`)
+  for (const href of new Set(resumes)) {
+    const response = await page.request.get(href)
+    if (!response.ok() || !response.headers()['content-type']?.includes('application/pdf') ||
+        !(await response.body()).equals(fs.readFileSync('assets/Resume-Anusha Agarwal.pdf'))) {
+      problems.push(`Resume does not serve the source PDF: ${href}`)
+    }
+  }
+  const copy = await page.locator('body').innerText()
+  if (/seeking|looking for internships?|recruiter|open to (?:work|opportunities)/i.test(copy)) {
+    problems.push('Job-seeking copy remains')
+  }
+  if (s.name === 'phone') {
+    const menu = page.locator('button[aria-controls="nav-links"]')
+    await menu.click()
+    if (await menu.getAttribute('aria-expanded') !== 'true') problems.push('Phone menu did not open')
+    await page.screenshot({ path: `${out}/phone-menu.png` })
+    await page.getByRole('navigation').getByRole('link', { name: 'About', exact: true }).click()
+    if (await menu.getAttribute('aria-expanded') !== 'false') problems.push('Phone menu did not close')
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }))
+    await page.waitForTimeout(500)
+  }
   await page.screenshot({ path: `${out}/${s.name}-full.png`, fullPage: true })
   const total = await page.evaluate(() => document.documentElement.scrollHeight)
   for (let y = 0, i = 1; y < total; y += s.slice, i++) {
@@ -49,7 +76,11 @@ for (const s of sizes) {
   }
   console.log(`${s.name}: ${total}px tall, horizontal overflow ${overflow}px, broken images ${broken.length}`)
   if (broken.length) console.log('  broken:', broken)
-  if (problems.length) console.log('  console problems:', problems)
+  if (problems.length) console.log('  problems:', problems)
+  console.log(`  resume links: ${resumes.length}, PDF verified against source`)
+  if (overflow > 0 || broken.length || problems.length) failed = true
   await page.close()
 }
 await browser.close()
+
+if (failed) process.exitCode = 1
