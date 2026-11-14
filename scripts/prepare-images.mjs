@@ -29,11 +29,13 @@ const OUT_IMG = path.join(OUT, 'img')
 const MANIFEST = path.join(root, 'src', 'data', 'images.generated.json')
 const force = process.argv.includes('--force')
 
-// The only illustration on the site: the hero portrait. Its cream background
+// Original painted illustrations. Their paper background
 // is removed. `holes` also clears paper-coloured areas enclosed by the subject
 // (for example between an arm and the body).
 const ILLUSTRATIONS = {
   hero: { widths: [560, 900, 1400], holes: true },
+  coffee: { widths: [240, 480], holes: true },
+  strawberry: { widths: [160, 320], holes: false },
 }
 
 const IMAGE_EXT = /\.(png|jpe?g|webp|avif)$/i
