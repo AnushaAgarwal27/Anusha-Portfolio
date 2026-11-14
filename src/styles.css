@@ -7,7 +7,7 @@
 :root {
   /* palette */
   --forest: #1f4d3a; /* headings, links, buttons, primary accents */
-  --moss: #14352a; /* contact band and footer */
+  --moss: #14352a; /* dark text and shaded accents */
   --sage: #a9bba0; /* secondary accents, dividers, tags */
   --leaf: #6e8b4e; /* secondary accents */
   --paper: #f4eedc; /* page background */
@@ -52,10 +52,13 @@ body {
   font-size: 1.125rem;
   line-height: 1.6;
   background-color: var(--paper);
-  /* uneven washes so the paper never looks like a flat fill */
-  background-image: radial-gradient(60rem 40rem at 12% 8%, color-mix(in srgb, white 40%, transparent), transparent 70%),
-    radial-gradient(50rem 36rem at 92% 34%, color-mix(in srgb, var(--sage) 16%, transparent), transparent 70%),
-    radial-gradient(56rem 44rem at 20% 72%, color-mix(in srgb, var(--sage) 8%, transparent), transparent 70%);
+  /* One continuous sheet: dappled green light and a subtle woven texture. */
+  background-image:
+    radial-gradient(ellipse at 0% 5%, color-mix(in srgb, var(--sage) 34%, transparent), transparent 45%),
+    radial-gradient(ellipse at 100% 35%, color-mix(in srgb, var(--leaf) 12%, transparent), transparent 45%),
+    radial-gradient(ellipse at 0% 75%, color-mix(in srgb, var(--sage) 30%, transparent), transparent 45%),
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--forest) 3%, transparent) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--forest) 2%, transparent) 0 1px, transparent 1px 5px);
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
@@ -549,77 +552,15 @@ button {
   stroke-linejoin: round;
 }
 
-/* full-width torn bands */
-.band {
-  position: relative;
-  background: var(--band);
-}
-.torn-edge {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 26px;
-  color: var(--band);
-  pointer-events: none;
-  z-index: 3;
-}
-.torn-edge--top {
-  top: -25px;
-}
-.torn-edge--bottom {
-  bottom: -25px;
-  transform: scaleY(-1);
-}
-.torn-edge__fiber {
-  fill: white;
-  opacity: 0.7;
-}
-.band--sheet {
-  --band: var(--sheet);
-}
-.band--sheet .torn-edge {
-  filter: drop-shadow(0 -3px 3px rgba(var(--shade), 0.1));
-}
-.band--moss {
-  --band: var(--moss);
-  color: var(--paper);
-  /* brush streaks across the painted block: forest green over moss */
-  background-color: var(--moss);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='300'%3E%3Cfilter id='b' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .11' numOctaves='3' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.3 -.5'/%3E%3C/filter%3E%3Crect width='900' height='300' filter='url(%23b)'/%3E%3C/svg%3E"),
-    linear-gradient(var(--forest), var(--forest));
-  background-blend-mode: soft-light, normal;
-}
-.band--moss::before {
-  /* moss wash over the forest streaks */
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--moss);
-  opacity: 0.55;
-  pointer-events: none;
-}
-.band--moss > * {
-  position: relative;
-}
-.band--moss .torn-edge {
-  position: absolute;
-}
-.band--moss .torn-edge__fiber {
-  fill: var(--sage);
-}
-
 .hero__facts {
-  --band: var(--sheet);
   position: relative;
   z-index: 6;
-  margin-top: -1.1rem;
-  background: var(--sheet);
-  filter: drop-shadow(0 -6px 10px rgba(var(--shade), 0.1)) drop-shadow(0 8px 10px rgba(var(--shade), 0.1));
+  width: min(100% - 2.25rem, 70rem);
+  margin: 0 auto;
+  border-block: 1px solid var(--line);
 }
 .hero__facts ul {
-  width: min(100% - 2.25rem, 70rem);
-  margin-inline: auto;
-  padding: 0.9rem 0 1rem;
+  padding: 1.25rem 0;
   display: grid;
   gap: 0.75rem;
 }
@@ -1338,12 +1279,12 @@ button {
 }
 .contact .ink,
 .footer .ink {
-  color: var(--paper);
-  text-decoration-color: var(--sage);
+  color: var(--forest);
+  text-decoration-color: var(--leaf);
 }
 .contact .ink:hover,
 .footer .ink:hover {
-  color: white;
+  color: var(--moss);
 }
 .contact__inner .contact__links {
   display: grid;
@@ -1360,7 +1301,7 @@ button {
   font-size: 0.74rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--sage);
+  color: var(--forest);
 }
 .contact__inner .contact__cta {
   margin-top: 2.6rem;
@@ -1369,8 +1310,8 @@ button {
   color: var(--ink);
 }
 .contact .btn::before {
-  background: var(--paper);
-  filter: url(#rough) drop-shadow(0 3px 0 rgba(0, 0, 0, 0.3));
+  background: var(--sage);
+  filter: url(#rough);
 }
 .contact .btn::after {
   background: var(--sage);
@@ -1382,8 +1323,9 @@ button {
 
 .footer {
   padding: 1.4rem 1.1rem 2rem;
-  background: var(--moss);
-  color: var(--paper);
+  background: transparent;
+  color: var(--ink-soft);
+  border-top: 1px solid var(--line);
   font-family: var(--mono);
   font-size: 0.78rem;
   letter-spacing: 0.03em;
@@ -1513,7 +1455,7 @@ button {
     right: 6%;
   }
   .hero__facts {
-    margin-top: -1.8rem;
+    margin-top: 0;
   }
 
   .about {
@@ -1607,4 +1549,30 @@ button {
   .hero__patch {
     translate: none;
   }
+}
+
+/* Little painted things live in the margins of the same sheet of paper. */
+.hero, .projects { isolation: isolate; }
+.garden-vine, .little-coffee, .little-strawberry, .forest-friends {
+  pointer-events: none;
+  user-select: none;
+}
+.garden-vine { position: absolute; z-index: -1; }
+.garden-vine--hero { width: 170px; right: -65px; top: 470px; opacity: .85; transform: rotate(-8deg); }
+.garden-vine--projects { width: 160px; left: -100px; top: 80px; opacity: .5; transform: scaleX(-1); }
+.about__side { position: relative; }
+.little-coffee { width: 135px; justify-self: end; margin: -1.5rem 1.5rem -1.5rem 0; position: relative; transform: rotate(8deg); }
+.projects > .wrap { position: relative; }
+.little-strawberry { position: absolute; width: 60px; top: 0; right: 0; transform: rotate(15deg); }
+.contact { margin-top: 1rem; }
+.contact__layout { display: grid; align-items: end; gap: 2.5rem; }
+.forest-friends { width: 190px; justify-self: end; margin-top: -1rem; }
+.contact :focus-visible, .footer :focus-visible { outline-color: var(--forest); }
+@media (min-width: 900px) {
+  .garden-vine--hero { width: 240px; top: -30px; left: -105px; right: auto; opacity: .85; }
+  .garden-vine--projects { width: 220px; left: auto; right: -120px; top: 200px; opacity: .75; }
+  .little-coffee { width: 160px; margin: -1rem 2rem -3rem 0; }
+  .little-strawberry { width: 75px; right: 3rem; top: -1rem; }
+  .contact__layout { grid-template-columns: minmax(0, 1fr) 300px; }
+  .forest-friends { width: 320px; margin: 0 0 1rem; }
 }

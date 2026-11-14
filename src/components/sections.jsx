@@ -1,7 +1,7 @@
 import { about, art, contact, contactSection, experience, gallery, site, skills } from '../data/content.js'
 import { findArt, galleryKeys, getImage, prettyName } from '../lib/images.js'
 import { tornClip } from '../lib/paper.js'
-import { Brush, Button, Frame, InkLink, SectionHeading, Tape, TornEdge } from './bits.jsx'
+import { Brush, Button, Frame, InkLink, SectionHeading, Tape, Pic } from './bits.jsx'
 
 export function About() {
   const { glance } = about
@@ -35,6 +35,7 @@ export function About() {
           ))}
         </dl>
       </aside>
+      <Pic className="little-coffee" src="coffee" alt="" sizes="160px" />
       </div>
     </section>
   )
@@ -141,31 +142,35 @@ export function Skills() {
 
 export function Contact() {
   return (
-    <section className="band band--moss section contact" aria-labelledby="contact">
-      <TornEdge seed={61} />
-      <div className="wrap contact__inner">
-        <h2 className="h2 h2--paper reveal" id="contact">
-          <span className="h2__text">{contactSection.heading}</span>
-          <Brush className="h2__stroke" variant={1} />
-        </h2>
-        <p className="contact__text reveal">{contactSection.text}</p>
-        <p className="contact__email reveal">
-          <a className="ink" href={`mailto:${contact.email}`}>
-            {contact.email}
-          </a>
-        </p>
-        <ul className="contact__links reveal">
-          <li>
-            <span>LinkedIn</span>
-            <InkLink url={contact.linkedin}>{contact.linkedinLabel}</InkLink>
-          </li>
-          <li>
-            <span>GitHub</span>
-            <InkLink url={contact.github}>{contact.githubLabel}</InkLink>
-          </li>
-        </ul>
-        <div className="contact__cta reveal">
-          <Button href={contact.resume}>Resume (PDF)</Button>
+    <section className="section contact" aria-labelledby="contact">
+      <div className="wrap contact__layout">
+        <div className="contact__inner">
+          <h2 className="h2 reveal" id="contact">
+            <span className="h2__text">{contactSection.heading}</span>
+            <Brush className="h2__stroke" variant={1} />
+          </h2>
+          <p className="contact__text reveal">{contactSection.text}</p>
+          <p className="contact__email reveal">
+            <a className="ink" href={`mailto:${contact.email}`}>
+              {contact.email}
+            </a>
+          </p>
+          <ul className="contact__links reveal">
+            <li>
+              <span>LinkedIn</span>
+              <InkLink url={contact.linkedin}>{contact.linkedinLabel}</InkLink>
+            </li>
+            <li>
+              <span>GitHub</span>
+              <InkLink url={contact.github}>{contact.githubLabel}</InkLink>
+            </li>
+          </ul>
+          <div className="contact__cta reveal">
+            <Button href={contact.resume}>Resume (PDF)</Button>
+          </div>
+        </div>
+        <div className="forest-friends" aria-hidden="true">
+          <Pic src="art/forest-friends.png" alt="" sizes="(min-width: 900px) 320px, 200px" />
         </div>
       </div>
     </section>

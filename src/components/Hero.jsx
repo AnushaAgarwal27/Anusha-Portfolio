@@ -1,9 +1,10 @@
 import { hero } from '../data/content.js'
-import { Brush, Button, PaintPatch, Pic, TornEdge } from './bits.jsx'
+import { Brush, Button, PaintPatch, Pic } from './bits.jsx'
 
 export default function Hero() {
   return (
     <header className="hero" id="top">
+      <Pic className="garden-vine garden-vine--hero" src="art/money-plant.png" alt="" sizes="240px" />
       <div className="hero__inner">
         <div className="hero__text">
           <p className="eyebrow">{hero.eyebrow}</p>
@@ -39,7 +40,6 @@ export default function Hero() {
       </div>
 
       <div className="hero__facts">
-        <TornEdge seed={5} />
         <ul>
           {hero.facts.map((f) => (
             <li key={f.label}>
@@ -48,7 +48,6 @@ export default function Hero() {
             </li>
           ))}
         </ul>
-        <TornEdge seed={9} bottom />
       </div>
     </header>
   )

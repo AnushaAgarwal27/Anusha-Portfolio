@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { projects, site } from '../data/content.js'
 import { eventPhotos, findArt, getImage, prettyName } from '../lib/images.js'
-import { Brush, Details, Frame, Lightbox, LinkButton, Pic, SectionHeading, TornEdge, isRealLink } from './bits.jsx'
+import { Brush, Details, Frame, Lightbox, LinkButton, Pic, SectionHeading, isRealLink } from './bits.jsx'
 
 const FEATURED_COUNT = 3 // the first 3 projects are featured unless a project says otherwise
 const MORE_VISIBLE = 6 // "More projects" shows this many before the "Show all" button
@@ -159,9 +159,10 @@ export default function Projects() {
   const shown = showAll ? more : more.slice(0, MORE_VISIBLE)
 
   return (
-    <section className="band band--sheet section" aria-labelledby="projects">
-      <TornEdge seed={21} />
+    <section className="section projects" aria-labelledby="projects">
+      <Pic className="garden-vine garden-vine--projects" src="art/money-plant.png" alt="" sizes="180px" />
       <div className="wrap">
+        <Pic className="little-strawberry" src="strawberry" alt="" sizes="80px" />
         <SectionHeading id="projects" variant={2}>
           {projects.heading}
         </SectionHeading>
@@ -191,7 +192,6 @@ export default function Projects() {
           </>
         )}
       </div>
-      <TornEdge seed={27} bottom />
 
       {viewer && (
         <Lightbox
